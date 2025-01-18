@@ -1,0 +1,7 @@
+{
+    "tex_file_dir": "tex",
+    "main_tex_file": "main.tex",
+    "output_dir": ".output",
+    "output_file_name": "NicholasKammererCoverLetter",
+    "builds_dir": "pdf_builds"
+}
