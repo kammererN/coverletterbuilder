@@ -1,7 +1,8 @@
 {
     "tex_file_dir": "tex",
-    "main_tex_file": "main.tex",
+    "main_tex_file": "cletter.tex",
     "output_dir": ".output",
     "output_file_name": "NicholasKammererCoverLetter",
-    "builds_dir": "pdf_builds"
+    "builds_dir": "pdf_builds",
+    "abs_down": "/Users/nkam/Downloads"
 }

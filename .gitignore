@@ -2,3 +2,5 @@
 /tex
 /.output
 /pdf_builds
+
+/__pycache__
