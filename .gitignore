@@ -6,10 +6,10 @@
 /__pycache__
 */__pycache__
 
-/db/app-tracker.csv
 /db/test.py
 
 /tex.bak
 
 config.json
 test.py
+db.csv
