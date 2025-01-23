@@ -52,6 +52,15 @@ def generate_default_config(config_path: str) -> None:
     print(f"Config written to {config_path}.")
 
 
+def has_applied() -> bool:
+    """
+
+    Returns:
+        bool: _description_
+    """
+    pass
+
+
 def app() -> None:
     """Main driver for texbuilder, mailer & data manager.
     """

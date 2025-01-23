@@ -42,3 +42,39 @@ class DataFileManager:
         """
         for row in self.get_datafile():
             print(row)
+
+    def record_exists(self, record: str) -> bool:
+        """Recurses through the csvfile and returns true if the record is present
+
+        Args:
+            record (str): A string to search the database for
+
+        Returns:
+            bool: A boolean representation of the record's existence
+        """
+        try:
+            with open(self.config['datafile_path'], 'r', encoding='utf8') as file:
+                reader = csv.reader(file)
+
+                # Process each row recursively
+                def process_row(row):
+                    for cell in row:
+                        if record in cell:
+                            return True
+                    return False
+
+                # Start from the first row
+                current_row = next(reader)
+                while current_row:
+                    if process_row(current_row):
+                        return True
+                    current_row = next(reader, None)
+
+            return False
+
+        except FileNotFoundError:
+            print(f"Error: File '{self.config['datafile_path']}' not found.")
+            return False
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return False

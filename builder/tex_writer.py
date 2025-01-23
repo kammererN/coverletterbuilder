@@ -26,6 +26,6 @@ class TexWriter:
     def write_tex_string_to_disk(self) -> None:
         """_summary_
         """
-        print(f"Writing texstring to file {self.config['texfile_path']}")
+        print(f"Writing texstring to file {self.config['texvars_path']}")
         with open(self.config['texvars_path'], 'w', encoding='utf8') as file:
             file.write(self.texstring)
