@@ -3,6 +3,7 @@
 config.json
 /data/db.csv
 
+/lib/__pycache__
 /lib/builder/.output
 /lib/builder/tex
 /lib/builder/__pycache__
