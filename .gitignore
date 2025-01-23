@@ -1,15 +1,14 @@
 /.venv
-
-/builder/.output
-/builder/tex
-
 /__pycache__
-*/__pycache__
+config.json
+/data/db.csv
 
-/db/test.py
-
+/lib/builder/.output
+/lib/builder/tex
+/lib/builder/__pycache__
+/lib/db/__pycache__
+/lib/db/test.py
+/lib/mailer/__pycache__
 /tex.bak
 
-config.json
-test.py
-db.csv
+/tests
