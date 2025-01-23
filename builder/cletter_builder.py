@@ -28,7 +28,7 @@ class CoverLetterBuilder:
         subprocess.run(cmd_list, cwd=self.config['texfile_dir'],
                        stdout=subprocess.DEVNULL, check=False)
 
-    def move_pdf_to_builds(self) -> None:
+    def move_pdf_to_builds(self, silent=False) -> None:
         """Moves a generated PDF file to the directory specified in
             """
         cmd = {
@@ -38,6 +38,8 @@ class CoverLetterBuilder:
         }
 
         cmd_list = [cmd['bin'], cmd['from'], cmd['to']]
-
-        subprocess.run(cmd_list, check=False)
+        if silent:
+            subprocess.run(cmd_list, check=False, stdout=subprocess.DEVNULL)
+        else:
+            subprocess.run(cmd_list, check=False)
         print(f"File {cmd['from']} moved to {cmd['to']}.")
