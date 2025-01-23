@@ -30,10 +30,10 @@ def generate_default_config(config_path: str) -> None:
             "texfile_path": "",
         },
         "builder": {
-            "tex_file_dir": "tex",
-            "main_tex_file": "cletter.tex",
+            "texfile_dir": "",
+            "texfile": "",
             "output_dir": ".output",
-            "output_file_name": "",
+            "output_filename": "",
             "builds_dir": ""
         },
         "mailer": {
@@ -75,4 +75,5 @@ def app() -> None:
 
 
 if __name__ == "__main__":
-    app()
+    generate_default_config(CONFIG_PATH_ABS)
+    # app()

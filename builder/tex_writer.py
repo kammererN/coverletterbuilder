@@ -27,5 +27,5 @@ class TexWriter:
         """_summary_
         """
         print(f"Writing texstring to file {self.config['texfile_path']}")
-        with open(self.config['texfile_path'], 'w', encoding='utf8') as file:
+        with open(self.config['texvars_path'], 'w', encoding='utf8') as file:
             file.write(self.texstring)
