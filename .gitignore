@@ -1,6 +1,13 @@
-/venv
-/tex
-/.output
-/pdf_builds
+/.venv
+
+/builder/.output
+/builder/tex
 
 /__pycache__
+*/__pycache__
+
+/db/app-tracker.csv
+
+/tex.bak
+
+config.json
