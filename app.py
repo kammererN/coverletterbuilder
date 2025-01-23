@@ -3,8 +3,10 @@ from builder.cletter_builder import CoverLetterBuilder
 from builder.tex_writer import TexWriter
 from mailer.emailer import Emailer
 import json
+from db.db import DataFileManager
 
 CONFIG_PATH_ABS = '/Users/nkam/Documents/code/coverletterbuilder/config.json'
+
 
 def generate_default_config(config_path: str) -> None:
     default_config = {
@@ -15,28 +17,27 @@ def generate_default_config(config_path: str) -> None:
             "vacancyTitle": "JOB TITLE",
             "theirStreetNumber": "1 NAME AVE",
             "theirCityStateZip": "CITY, NY 12345",
-            "theirEmailAddress": "nxrada@gmail.com"
+            "theirEmailAddress": "agency@nys.gov"
         },
         "writer": {
-            "texfile_path": "/Users/nkam/Documents/code/coverletterbuilder/config.json",
-            "json_file_path": "/Users/nkam/Documents/code/coverletterbuilder/builder/tex/vars.tex"
+            "texfile_path": "",
         },
         "builder": {
             "tex_file_dir": "tex",
             "main_tex_file": "cletter.tex",
             "output_dir": ".output",
-            "output_file_name": "NicholasKammererCoverLetter",
-            "builds_dir": "/Users/nkam/Documents/resume-cletter-transcripts"
+            "output_file_name": "",
+            "builds_dir": ""
         },
         "mailer": {
-            "sender_email": "nkammerer@alumni.albany.edu",
-            "sender_password": "adcb jizg inyy woaq ",
+            "sender_email": "",
+            "sender_password": "",
             "smtp_server_address": "smtp.gmail.com",
             "smtp_port": 587,
-            "attachments": ["/Users/nkam/Documents/resume-cletter-transcripts/NicholasKammererCoverLetter.pdf", "/Users/nkam/Documents/resume-cletter-transcripts/NicholasKammererResumeJan25.pdf"]
+            "attachments": ["", ""]
         },
         "db": {
-            "data_file_path": ""
+            "datafile_path": ""
         }
     }
     with open(config_path, 'w') as file:
@@ -45,11 +46,12 @@ def generate_default_config(config_path: str) -> None:
 
 
 def app():
-    writer = TexWriter('/Users/nkam/Documents/code/coverletterbuilder/builder/tex/vars.tex', CONFIG_PATH_ABS)
+    writer = TexWriter(CONFIG_PATH_ABS)
     builder = CoverLetterBuilder(CONFIG_PATH_ABS)
+    mailer = Emailer(CONFIG_PATH_ABS)
+    data_mgr = DataFileManager(CONFIG_PATH_ABS)
 
     # Write TexVars
-    writer.compile_tex_string()
     writer.write_tex_string_to_disk()
 
     # Build Tex PDF
@@ -57,10 +59,11 @@ def app():
     builder.move_pdf_to_builds()
 
     # Send email
-    mailer = Emailer(CONFIG_PATH_ABS)
     mailer.send_email()
+    data_mgr.append_datafile([data_mgr.date, writer.json_vars['vacancyID'], 
+                              writer.json_vars['vacancyTitle'].strip(), 
+                              writer.json_vars['stateAgency']])
 
 
 if __name__ == "__main__":
-    #app()
-    generate_default_config(CONFIG_PATH_ABS)
+    app()

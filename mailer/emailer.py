@@ -23,7 +23,7 @@ class Emailer:
         self.message['Subject'] = f'Application for {self.tex['vacancyTitle']}, vacancy {self.tex['vacancyID']}'
         # Build body
         self.greeting = f'Good afternoon {self.tex['hiringManager']}:\n\n'
-        self.info = f'I am writing to apply for the {self.tex['vacancyTitle']} position; vacancy {self.tex['vacancyID']}.\nAttached: resume, cover letter\n\n'
+        self.info = f'I am writing to apply for the {self.tex['vacancyTitle'].strip()} position; vacancy {self.tex['vacancyID']}.\nAttached: resume, cover letter\n\n'
         self.closing = f'Thank you for the consideration,\nNicholas J. Kammerer\n<njkammerer@outlook.com>'
         self.body = self.greeting + self.info + self.closing
         
@@ -39,7 +39,7 @@ class Emailer:
     def send_email(self) -> None:
         try:
             with smtplib.SMTP(self.config['smtp_server_address'], self.config['smtp_port']) as server:
-                print("Server allowed access...\n")
+                print("Server allowed access... sending mail...\n")
                 server.starttls()
                 server.login(self.config['sender_email'], self.config['sender_password'])
                 server.send_message(self.message)
