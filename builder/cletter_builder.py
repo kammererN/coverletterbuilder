@@ -1,27 +1,43 @@
-# Python script for building a pdflatex cover letter
+"""Module for generating a pdf coverletter based on a given texfile.
+"""
 import subprocess
 import json
-from pathlib import Path
+
 
 class CoverLetterBuilder:
+    """Class for generating a pdf coverletter based on a given texfile.
+    """
 
     def __init__(self, config_path_abs: str):
-        self.runtime_dir = Path(__file__).parent
         self.config_path_abs = config_path_abs
-        with open(self.config_path_abs) as json_file:
+        with open(self.config_path_abs, encoding='utf8') as json_file:
             self.config = json.load(json_file)['builder']
-        self.texfile_dir = self.runtime_dir / self.config['tex_file_dir']
-        self.texfile = self.texfile_dir / self.config['main_tex_file']
-        self.output_dir = self.runtime_dir / self.config['output_dir']
-        self.output_filename = self.config['output_file_name']
-        self.pdflatex_command = ['pdflatex', f'-output-directory={self.output_dir}', f'-jobname={self.output_filename}', f'{self.texfile}']
-        self.builds_dir = self.config['builds_dir']  # Absolute path
 
     def generate_pdf_from_tex(self) -> None:
-        print(f"Generating pdf {self.output_filename} from texfile {self.texfile}")
-        subprocess.run(self.pdflatex_command, cwd=self.texfile_dir, stdout=subprocess.DEVNULL)
-    
+        """Generates a pdf file according to the given texfile path.
+            """
+        cmd = {
+            'out_dir': f'-output-directory={self.config['output_dir']}',
+            'jobname': f'-jobname={self.config['output_filename']}',
+            'texfile': f'{self.config['texfile']}',
+            'bin': 'pdflatex',
+        }
+        cmd_list = [cmd['bin'], cmd['out_dir'], cmd['jobname'], cmd['texfile']]
+        print(f"Generating pdf {self.config['output_filename']
+                                } from texfile {self.config['texfile']}")
+        subprocess.run(cmd_list, cwd=self.config['texfile_dir'],
+                       stdout=subprocess.DEVNULL, check=False)
+
     def move_pdf_to_builds(self) -> None:
-        mv_cmd = ['mv', f'{Path(self.output_dir / self.output_filename)}.pdf', f'{Path(self.builds_dir)}']
-        subprocess.run(mv_cmd)
-        print(f"File {self.output_filename} moved to {self.builds_dir}.")
+        """Moves a generated PDF file to the directory specified in
+            """
+        cmd = {
+            'from': f'{self.config['builds_dir']}/{self.config['output_filename']}.pdf',
+            'to': f'{self.config['builds_dir']}',
+            'bin': 'mv'
+        }
+
+        cmd_list = [cmd['bin'], cmd['from'], cmd['to']]
+
+        subprocess.run(cmd_list, check=False)
+        print(f"File {cmd['from']} moved to {cmd['to']}.")

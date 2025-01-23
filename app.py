@@ -1,17 +1,24 @@
-from pathlib import Path
+"""Module for driving the application.
+"""
+
+import json
 from builder.cletter_builder import CoverLetterBuilder
 from builder.tex_writer import TexWriter
 from mailer.emailer import Emailer
-import json
 from db.db import DataFileManager
 
 CONFIG_PATH_ABS = '/Users/nkam/Documents/code/coverletterbuilder/config.json'
 
 
 def generate_default_config(config_path: str) -> None:
+    """Generates the expected json config file at the given path.
+
+    Args:
+        config_path (str): The path for the config file to be written.
+    """
     default_config = {
         "tex": {
-            "stateAgency": "NYS AGENCY",
+            "stateAgency": "AGENCY",
             "vacancyID": "00000",
             "hiringManager": "HIRING MANAGER",
             "vacancyTitle": "JOB TITLE",
@@ -40,12 +47,14 @@ def generate_default_config(config_path: str) -> None:
             "datafile_path": ""
         }
     }
-    with open(config_path, 'w') as file:
+    with open(config_path, 'w', encoding='utf8') as file:
         json.dump(default_config, file)
     print(f"Config written to {config_path}.")
 
 
-def app():
+def app() -> None:
+    """Main driver for texbuilder, mailer & data manager.
+    """
     writer = TexWriter(CONFIG_PATH_ABS)
     builder = CoverLetterBuilder(CONFIG_PATH_ABS)
     mailer = Emailer(CONFIG_PATH_ABS)
@@ -60,11 +69,10 @@ def app():
 
     # Send email
     mailer.send_email()
-    data_mgr.append_datafile([data_mgr.date, writer.json_vars['vacancyID'], 
-                              writer.json_vars['vacancyTitle'].strip(), 
+    data_mgr.append_datafile([data_mgr.date, writer.json_vars['vacancyID'],
+                              writer.json_vars['vacancyTitle'].strip(),
                               writer.json_vars['stateAgency']])
 
 
 if __name__ == "__main__":
     app()
-
