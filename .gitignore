@@ -1,6 +1,7 @@
 /.venv
 /__pycache__
 config.json
+*.pdf
 /data/db.csv
 
 /lib/__pycache__
