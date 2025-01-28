@@ -2,8 +2,11 @@
 /__pycache__
 config.json
 *.pdf
+*.spec
 
 /data
+
+/build
 
 /lib/__pycache__
 /lib/config.json

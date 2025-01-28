@@ -73,6 +73,21 @@ app = Typer()
 check_config_exists(CONFIG_PATH)
 
 
+def send_email(writer, mailer):
+    """Manually sends the email defined in `config.json`.
+    """
+    manager = CSVFileManager(CONFIG_PATH)
+
+    # Send email if the vacancyID is not present in the database
+    if manager.record_exists(writer.json_vars['vacancyID']):
+        print(f"You\'ve already applied to {writer.json_vars['vacancyID']}.")
+    else:
+        mailer.send_email()
+        manager.append_datafile([manager.date, writer.json_vars['vacancyID'],
+                                 writer.json_vars['vacancyTitle'].strip(),
+                                 writer.json_vars['stateAgency']])
+
+
 @app.command()
 def query_db(vacancy_id: int):
     """Queries the database against a given vacancy ID. Prints vacancy data if successful.
@@ -103,46 +118,6 @@ def build_send():
     choice = input('Do you want to send this message? (Y/n): ')
     if choice.lower() == 'y':
         send_email(writer, mailer)
-
-
-"""
-@app.command()
-def mangen(show_file=False):
-    Generates a cover letter pdf according to a manually defined state.
-    
-    writer = TexWriter(CONFIG_PATH)
-    builder = CoverLetterBuilder(CONFIG_PATH)
-
-    writer.manual_var_input(list(writer.json_vars.keys()))
-    writer.write_tex_string_to_disk()
-
-    builder.generate_pdf_from_tex()
-    builder.move_pdf_to_builds(silent=True)
-
-    if show_file:
-        launch(f"{builder.config['builds_dir']}/{builder.config['output_filename']}.pdf",
-               locate=True)
-
-    choice = input('Do you want to send this message? (Y/n): ')
-    if choice.lower() == 'y':
-        mailer = Emailer(CONFIG_PATH)
-        send_email(writer, mailer)
-"""
-
-
-def send_email(writer, mailer):
-    """Manually sends the email defined in `config.json`.
-    """
-    manager = CSVFileManager(CONFIG_PATH)
-
-    # Send email if the vacancyID is not present in the database
-    if manager.record_exists(writer.json_vars['vacancyID']):
-        print(f"You\'ve already applied to {writer.json_vars['vacancyID']}.")
-    else:
-        mailer.send_email()
-        manager.append_datafile([manager.date, writer.json_vars['vacancyID'],
-                                 writer.json_vars['vacancyTitle'].strip(),
-                                 writer.json_vars['stateAgency']])
 
 
 if __name__ == "__main__":
