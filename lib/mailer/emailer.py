@@ -21,10 +21,10 @@ class Emailer:
         self.message = MIMEMultipart()
         self.message['From'] = self.config['sender_email']
         self.message['To'] = self.tex['theirEmailAddress']
-        self.message['Subject'] = f"Application for {self.tex['vacancyTitle']}; Vacancy {self.tex['vacancyID']}"
+        self.message['Subject'] = f"Application for {self.tex['vacancyTitle'].strip()}; Vacancy {self.tex['vacancyID']}"
         # Build body
         self.greeting = f"Good afternoon {self.tex['hiringManager']}:\n\n"
-        self.info = f"I am writing to apply for the {self.tex['vacancyTitle'].strip()} position vacancy {self.tex['vacancyID']}.\nAttached: resume, cover letter\n\n"
+        self.info = f"I am writing to apply for the {self.tex['vacancyTitle'].strip()} position; vacancy {self.tex['vacancyID']}.\nAttached: resume, cover letter\n\n"
         self.closing = f"Thank you for the consideration, \nNicholas J. Kammerer\n <{self.config['sender_email']}>"
         self.body = self.greeting + self.info + self.closing
         # Add body to message
