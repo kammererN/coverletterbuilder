@@ -88,7 +88,7 @@ def query_db(vacancy_id: int):
 
 
 @app.command()
-def autogen():
+def build_send():
     """Generates a cover letter pdf according to the existing state of the latex files.
     The generated pdf can be found in the directory specified in `config.json`
     """
