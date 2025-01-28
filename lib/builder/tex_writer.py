@@ -20,7 +20,8 @@ class TexWriter:
         """Method for compiling texstring from a dictionary. 
         """
         for key, value in input_data.items():
-            self.texstring = self.texstring + f"\\newcommand{{\\{key}}}{{{value}}}\n"
+            self.texstring = self.texstring + \
+                f"\\newcommand{{\\{key}}}{{{value}}}\n"
         if not silent:
             print(f"Compiled texstring:\n{self.texstring}")
 
@@ -38,7 +39,9 @@ class TexWriter:
         new_var_dict = {}
         for var in required_vars:
             new_var_dict[var] = str(input(f'Input {var}: '))
+        print(new_var_dict)
         self.texstring = ""  # Empty texstring
         self.compile_tex_string(new_var_dict)
+        self.json_vars = new_var_dict
         if not silent:
             print(f"Compiled texstring:\n{self.texstring}")

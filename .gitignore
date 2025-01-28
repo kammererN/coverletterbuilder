@@ -2,7 +2,8 @@
 /__pycache__
 config.json
 *.pdf
-/data/db.csv
+
+/data
 
 /lib/__pycache__
 /lib/config.json

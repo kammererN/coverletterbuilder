@@ -21,14 +21,11 @@ class Emailer:
         self.message = MIMEMultipart()
         self.message['From'] = self.config['sender_email']
         self.message['To'] = self.tex['theirEmailAddress']
-        self.message['Subject'] = f'Application for {
-            self.tex['vacancyTitle']}, vacancy {self.tex['vacancyID']}'
+        self.message['Subject'] = f"Application for {self.tex['vacancyTitle']}; Vacancy {self.tex['vacancyID']}"
         # Build body
-        self.greeting = f'Good afternoon {self.tex['hiringManager']}:\n\n'
-        self.info = f'I am writing to apply for the {self.tex['vacancyTitle'].strip(
-        )} position; vacancy {self.tex['vacancyID']}.\nAttached: resume, cover letter\n\n'
-        self.closing = f'Thank you for the consideration,\nNicholas J. Kammerer\n<{
-            self.config['sender_email']}>'
+        self.greeting = f"Good afternoon {self.tex['hiringManager']}:\n\n"
+        self.info = f"I am writing to apply for the {self.tex['vacancyTitle'].strip()} position vacancy {self.tex['vacancyID']}.\nAttached: resume, cover letter\n\n"
+        self.closing = f"Thank you for the consideration, \nNicholas J. Kammerer\n <{self.config['sender_email']}>"
         self.body = self.greeting + self.info + self.closing
         # Add body to message
         self.message.attach(MIMEText(self.body, 'plain'))
@@ -37,19 +34,19 @@ class Emailer:
             attachment = MIMEApplication(
                 open(pdf, "rb").read(), _subtype="pdf")
             attachment.add_header('Content-Disposition',
-                                  f'attachment', filename=os.path.basename(pdf))
+                                  'attachment', filename=os.path.basename(pdf))
             self.message.attach(attachment)
 
     def send_email(self) -> None:
         """Tries to connect to a class-defined SMTP server. If unsuccessful, return error."""
         try:  # self.config['smtp_server_address']
             with smtplib.SMTP(self.config['smtp_server_address'], self.config['smtp_port']) as svr:
-                print("Server allowed access... sending mail...\n")
+                print("Server allowed access... sending mail...")
                 svr.starttls()
                 svr.login(self.config['sender_email'],
                           self.config['sender_password'])
                 svr.send_message(self.message)
-            print(f'Message sent to {self.message['To']}')
+            print(f"Message sent to {self.message['To']}")
         except Exception as e:
             print("Server denied access...\n")
             print(f"Error sending email: {e}")

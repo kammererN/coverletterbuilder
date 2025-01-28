@@ -17,23 +17,23 @@ class CoverLetterBuilder:
         """Generates a pdf file according to the given texfile path.
             """
         cmd = {
-            'out_dir': f'-output-directory={self.config['output_dir']}',
-            'jobname': f'-jobname={self.config['output_filename']}',
-            'texfile': f'{self.config['texfile']}',
+            'out_dir': f"-output-directory={self.config['output_dir']}",
+            'jobname': f"-jobname={self.config['output_filename']}",
+            'texfile': f"{self.config['texfile']}",
             'bin': 'pdflatex',
         }
         cmd_list = [cmd['bin'], cmd['out_dir'], cmd['jobname'], cmd['texfile']]
-        print(f"Generating pdf {self.config['output_filename']
-                                } from texfile {self.config['texfile']}")
+        print(
+            f"Generating pdf {self.config['output_filename']} from texfile {self.config['texfile']}")
         subprocess.run(cmd_list, cwd=self.config['texfile_dir'],
-                      stdout=subprocess.DEVNULL, check=False)
+                       stdout=subprocess.DEVNULL, check=False)
 
     def move_pdf_to_builds(self, silent=False) -> None:
         """Moves a generated PDF file to the directory specified in
             """
         cmd = {
-            'from': f'{self.config['output_dir']}/{self.config['output_filename']}.pdf',
-            'to': f'{self.config['builds_dir']}',
+            'from': f"{self.config['output_dir']}/{self.config['output_filename']}.pdf",
+            'to': f"{self.config['builds_dir']}",
             'bin': 'mv'
         }
 
