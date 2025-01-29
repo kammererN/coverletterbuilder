@@ -1,6 +1,7 @@
 """Module for an interactive command-line interface tool instead of basic driver
 """
 import os
+import sys
 from pathlib import Path
 from json import dump
 from typer import Typer, launch
@@ -152,20 +153,69 @@ def generate():
 
 @app.command()
 def interactive():
-    menu = [
-        inquirer.Checkbox('interests')
-    ]
+    """Allows for execution of this program in an interactive manner.
+    """
+    def clear():
+        if os.name == 'nt':
+            os.system('cls')
+            return
+        os.system('clear')
+
+    try:
+        escaped = False
+        while not escaped:
+            questions = [
+                inquirer.List(name='choice',
+                              message="Select an option to continue",
+                              choices=["Query database", "Edit", "Generate cover letter",
+                                       "View cover letter", "Open GitHub repository", "Exit"],
+                              carousel=True
+                              ),
+            ]
+            answers = inquirer.prompt(questions)['choice']
+            if "Exit" in answers:
+                escaped = True
+            match answers:
+                case 'Query database':
+                    clear()
+                    query_db(vacancy_id=int(input("Enter the vacancy ID: ")))
+                case 'Edit':
+                    pass
+                case 'Generate cover letter':
+                    clear()
+                    generate()
+                case 'View cover letter':
+                    clear()
+                    try:
+                        view()
+                    except FileNotFoundError as e:
+                        print(f"Error: {e}")
+                case 'Open GitHub repository':
+                    clear()
+                    launch('https://github.com/kammererN/coverletterbuilder')
+                case __:
+                    pass
+
+    except KeyboardInterrupt:
+        print('Escape detected: closing program.')
+
+    except SystemExit:
+        print('System exist deteched: closing program')
+        sys.exit(0)
+    except Exception as e:
+
+        print(f"Error: {e}")
 
 
-@app.command()
+@ app.command()
 def view():
     """Opens the most recently generated cover letter .pdf in the OS-defined launcher.
     """
     builder = CoverLetterBuilder(CONFIG_PATH)
-    pdf_path = builder.config[''] / builder.config['']
-
-    print(f"Opening coverletter {pdf_path}...")
-    launch()
+    pdf_path = Path(builder.config['builds_dir']) / \
+        builder.config['output_filename']
+    pdf_path = f"{pdf_path}.pdf"
+    launch(pdf_path)
 
 
 if __name__ == "__main__":
