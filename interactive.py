@@ -93,16 +93,16 @@ def check_texvars_exists(texvars_path: str) -> None:
                 "theirEmailAddress": "nxrada@gmail.com"
             }
             with open(texvars_path, encoding='utf8') as file:
-                dump(texvars_path, file)
-            print(f"Config written to {config_path}")
+                dump(default_texvars, file)
+            print(f"Texvars written to {texvars_path}")
 
         generate_default_texvars(texvars_path)
 
 
 app = Typer()
 
-check_config_exists(CONFIG_PATH)
-check_texvars_exists(TEXVARS_PATH)
+check_config_exists(str(CONFIG_PATH))
+check_texvars_exists(str(TEXVARS_PATH))
 
 
 def send_email(writer, mailer):
@@ -152,6 +152,14 @@ def generate():
 
 
 @app.command()
+def edit():
+    """_summary_
+    """
+    writer = TexWriter(str(CONFIG_PATH), str(TEXVARS_PATH))
+    writer.manual_var_input(writer.json_vars)
+
+
+@app.command()
 def interactive():
     """Allows for execution of this program in an interactive manner.
     """
@@ -164,14 +172,14 @@ def interactive():
     try:
         escaped = False
         while not escaped:
-            questions = [
-                inquirer.List(name='choice',
-                              message="Select an option to continue",
-                              choices=["Query database", "Edit", "Generate cover letter",
-                                       "View cover letter", "Open GitHub repository", "Exit"],
-                              carousel=True
-                              ),
-            ]
+            questions = [nah
+                         inquirer.List(name='choice',
+                                       message="Select an option to continue",
+                                       choices=["Query database", "Edit texvars.json", "Generate cover letter",
+                                                "View cover letter", "Open GitHub repository", "Exit"],
+                                       carousel=True
+                                       ),
+                         ]
             answers = inquirer.prompt(questions)['choice']
             if "Exit" in answers:
                 escaped = True
@@ -179,8 +187,9 @@ def interactive():
                 case 'Query database':
                     clear()
                     query_db(vacancy_id=int(input("Enter the vacancy ID: ")))
-                case 'Edit':
-                    pass
+                case 'Edit texvars.json':
+                    clear()
+                    edit()
                 case 'Generate cover letter':
                     clear()
                     generate()
@@ -202,16 +211,13 @@ def interactive():
     except SystemExit:
         print('System exist deteched: closing program')
         sys.exit(0)
-    except Exception as e:
-
-        print(f"Error: {e}")
 
 
 @ app.command()
 def view():
     """Opens the most recently generated cover letter .pdf in the OS-defined launcher.
     """
-    builder = CoverLetterBuilder(CONFIG_PATH)
+    builder = CoverLetterBuilder(str(CONFIG_PATH))
     pdf_path = Path(builder.config['builds_dir']) / \
         builder.config['output_filename']
     pdf_path = f"{pdf_path}.pdf"
