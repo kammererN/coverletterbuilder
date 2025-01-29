@@ -21,3 +21,5 @@ texvars.json
 /lib/db/test.py
 
 /lib/mailer/__pycache__
+
+/dist

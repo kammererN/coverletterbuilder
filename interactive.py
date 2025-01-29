@@ -176,7 +176,9 @@ def interactive():
                 inquirer.List(name='choice',
                               message="Select an option to continue",
                               choices=["Query database", "Edit texvars.json", "Generate cover letter",
-                                       "View cover letter", "Open GitHub repository", "Exit"],
+                                       "View generated pdf", "Open GitHub repo",
+                                       "Open StateJobsNY.gov", "Open Gmail sent folder",
+                                       "Exit"],
                               carousel=True
                               ),
             ]
@@ -199,9 +201,15 @@ def interactive():
                         view()
                     except FileNotFoundError as e:
                         print(f"Error: {e}")
+                case 'Open StateJobsNY.gov':
+                    clear()
+                    launch("https://statejobs.ny.gov/public/search.cfm")
+                case 'Open Gmail sent folder':
+                    clear()
+                    launch("https://mail.google.com/mail/u/1/#sent")
                 case 'Open GitHub repository':
                     clear()
-                    launch('https://github.com/kammererN/coverletterbuilder')
+                    launch("https://github.com/kammererN/coverletterbuilder")
                 case __:
                     pass
 
