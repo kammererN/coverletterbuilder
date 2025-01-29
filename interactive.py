@@ -5,17 +5,18 @@ from pathlib import Path
 from json import dump
 from typer import Typer, launch
 from rich import print
-from lib.builder.cletter_builder import CoverLetterBuilder
-from lib.builder.tex_writer import TexWriter
+import inquirer
+from lib.builder.builder import CoverLetterBuilder
+from lib.builder.writer import TexWriter
 from lib.mailer.emailer import Emailer
 from lib.db.csv_file_manager import CSVFileManager
 
-
 CONFIG_PATH = Path(os.getcwd()) / 'config.json'
+TEXVARS_PATH = Path(os.getcwd()) / 'texvars.json'
 
 
 def check_config_exists(config_path: str) -> None:
-    """Checks for the existence of a configuration file; if the file doesn't exist, create the file.
+    """Checks for the existence of a config file; if not, create the file.
 
     Args:
         config_path (str): Absolute path to the configuration file.
@@ -65,12 +66,42 @@ def check_config_exists(config_path: str) -> None:
             with open(config_path, 'w', encoding='utf8') as file:
                 dump(default_config, file)
             print(f"Config written to {config_path}")
+
         generate_default_config(config_path)
+
+
+def check_texvars_exists(texvars_path: str) -> None:
+    """Checks for the existence of texvar file; if not, create the file.
+
+    Args:
+        texvars_path (str): Absolute path to the texvar file.
+    """
+    if os.path.exists(texvars_path):
+        print(f"Config file exists at {texvars_path}")
+    else:
+        print(f"Config file does not exist at {texvars_path}")
+
+        def generate_default_texvars(texvars_path: str) -> None:
+            default_texvars = {
+                "stateAgency": "NYS Agency",
+                "vacancyID": "000000",
+                "hiringManager": "Guy",
+                "vacancyTitle": "Job",
+                "theirStreetNumber": "1 Name St",
+                "theirCityStateZip": "City, ST 123AB",
+                "theirEmailAddress": "nxrada@gmail.com"
+            }
+            with open(texvars_path, encoding='utf8') as file:
+                dump(texvars_path, file)
+            print(f"Config written to {config_path}")
+
+        generate_default_texvars(texvars_path)
 
 
 app = Typer()
 
 check_config_exists(CONFIG_PATH)
+check_texvars_exists(TEXVARS_PATH)
 
 
 def send_email(writer, mailer):
@@ -103,13 +134,12 @@ def query_db(vacancy_id: int):
 
 
 @app.command()
-def build_send():
-    """Generates a cover letter pdf according to the existing state of the latex files.
-    The generated pdf can be found in the directory specified in `config.json`
+def generate():
+    """Generates a cover letter in the form of a .pdf file, using the data in texvars.json
     """
-    writer = TexWriter(CONFIG_PATH)
+    writer = TexWriter(CONFIG_PATH, TEXVARS_PATH)
     builder = CoverLetterBuilder(CONFIG_PATH)
-    mailer = Emailer(CONFIG_PATH)
+    mailer = Emailer(CONFIG_PATH, TEXVARS_PATH)
 
     writer.write_tex_string_to_disk()
     builder.generate_pdf_from_tex()
@@ -118,6 +148,24 @@ def build_send():
     choice = input('Do you want to send this message? (Y/n): ')
     if choice.lower() == 'y':
         send_email(writer, mailer)
+
+
+@app.command()
+def interactive():
+    menu = [
+        inquirer.Checkbox('interests')
+    ]
+
+
+@app.command()
+def view():
+    """Opens the most recently generated cover letter .pdf in the OS-defined launcher.
+    """
+    builder = CoverLetterBuilder(CONFIG_PATH)
+    pdf_path = builder.config[''] / builder.config['']
+
+    print(f"Opening coverletter {pdf_path}...")
+    launch()
 
 
 if __name__ == "__main__":

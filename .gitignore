@@ -1,6 +1,8 @@
 /.venv
 /__pycache__
+
 config.json
+texvars.json
 *.pdf
 *.spec
 

@@ -11,12 +11,12 @@ import os
 class Emailer:
     """Class representing"""
 
-    def __init__(self, abs_config_path: str):
+    def __init__(self, abs_config_path: str, abs_texvars_path: str):
         # Load config from file
         with open(abs_config_path, 'r', encoding='utf8') as file:
             self.config = json.load(file)['mailer']
-        with open(abs_config_path, 'r', encoding='utf8') as file:
-            self.tex = json.load(file)['tex']
+        with open(abs_texvars_path, 'r', encoding='utf8') as file:
+            self.tex = json.load(file)
         # Generate message obj
         self.message = MIMEMultipart()
         self.message['From'] = self.config['sender_email']
