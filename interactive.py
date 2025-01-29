@@ -172,14 +172,14 @@ def interactive():
     try:
         escaped = False
         while not escaped:
-            questions = [nah
-                         inquirer.List(name='choice',
-                                       message="Select an option to continue",
-                                       choices=["Query database", "Edit texvars.json", "Generate cover letter",
-                                                "View cover letter", "Open GitHub repository", "Exit"],
-                                       carousel=True
-                                       ),
-                         ]
+            questions = [
+                inquirer.List(name='choice',
+                              message="Select an option to continue",
+                              choices=["Query database", "Edit texvars.json", "Generate cover letter",
+                                       "View cover letter", "Open GitHub repository", "Exit"],
+                              carousel=True
+                              ),
+            ]
             answers = inquirer.prompt(questions)['choice']
             if "Exit" in answers:
                 escaped = True
