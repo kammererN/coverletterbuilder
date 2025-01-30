@@ -105,10 +105,12 @@ check_config_exists(str(CONFIG_PATH))
 check_texvars_exists(str(TEXVARS_PATH))
 
 
-def send_email(writer, mailer):
+def send_email():
     """Manually sends the email defined in `config.json`.
     """
     manager = CSVFileManager(CONFIG_PATH)
+    mailer = Emailer(CONFIG_PATH, TEXVARS_PATH)
+    writer = TexWriter(CONFIG_PATH, TEXVARS_PATH)
 
     # Send email if the vacancyID is not present in the database
     if manager.record_exists(writer.json_vars['vacancyID']):
@@ -140,18 +142,14 @@ def generate():
     """
     writer = TexWriter(CONFIG_PATH, TEXVARS_PATH)
     builder = CoverLetterBuilder(CONFIG_PATH)
-    mailer = Emailer(CONFIG_PATH, TEXVARS_PATH)
 
     writer.write_tex_string_to_disk()
     builder.generate_pdf_from_tex()
     builder.move_pdf_to_builds(silent=True)
 
-    choice = input('Do you want to send this message? (Y/n): ')
-    if choice.lower() == 'y':
-        send_email(writer, mailer)
+# TODO: Fix docstring
 
 
-@app.command()
 def edit():
     """_summary_
     """
@@ -169,49 +167,48 @@ def interactive():
             return
         os.system('clear')
 
+    def hang():
+        input("Press any button to continue...")
+
     try:
         escaped = False
         while not escaped:
+            clear()
             questions = [
                 inquirer.List(name='choice',
                               message="Select an option to continue",
-                              choices=["Query database", "Edit texvars.json", "Generate cover letter",
-                                       "View generated pdf", "Open GitHub repo",
-                                       "Open StateJobsNY.gov", "Open Gmail sent folder",
+                              choices=["Query database", "Edit texvars.json", "Generate cover letter", "Send email",
                                        "Exit"],
                               carousel=True
                               ),
             ]
             answers = inquirer.prompt(questions)['choice']
+            clear()
             if "Exit" in answers:
                 escaped = True
+
+            # TODO: Make another case, print database that prints entire DB
             match answers:
                 case 'Query database':
-                    clear()
+                    # TODO: Make this handle gracefully if the input fails
                     query_db(vacancy_id=int(input("Enter the vacancy ID: ")))
                 case 'Edit texvars.json':
                     clear()
                     edit()
                 case 'Generate cover letter':
-                    clear()
                     generate()
-                case 'View cover letter':
-                    clear()
-                    try:
-                        view()
-                    except FileNotFoundError as e:
-                        print(f"Error: {e}")
-                case 'Open StateJobsNY.gov':
-                    clear()
-                    launch("https://statejobs.ny.gov/public/search.cfm")
-                case 'Open Gmail sent folder':
-                    clear()
-                    launch("https://mail.google.com/mail/u/1/#sent")
-                case 'Open GitHub repository':
-                    clear()
-                    launch("https://github.com/kammererN/coverletterbuilder")
+                case 'Send email':
+                    send_email()
+#                case 'View cover letter':
+#                    try:
+#                        view()
+#                    except FileNotFoundError as e:
+#                        print(f"Error: {e}")
+                case 'Exit':
+                    sys.exit(0)
                 case __:
                     pass
+            hang()
 
     except KeyboardInterrupt:
         print('Escape detected: closing program.')
