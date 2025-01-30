@@ -6,6 +6,7 @@ from pathlib import Path
 from json import dump
 from typer import Typer, launch
 from rich import print
+from rich.prompt import IntPrompt
 import inquirer
 from lib.builder.builder import CoverLetterBuilder
 from lib.builder.writer import TexWriter
@@ -108,9 +109,9 @@ check_texvars_exists(str(TEXVARS_PATH))
 def send_email():
     """Manually sends the email defined in `config.json`.
     """
-    manager = CSVFileManager(CONFIG_PATH)
-    mailer = Emailer(CONFIG_PATH, TEXVARS_PATH)
-    writer = TexWriter(CONFIG_PATH, TEXVARS_PATH)
+    manager = CSVFileManager(str(CONFIG_PATH))
+    mailer = Emailer(str(CONFIG_PATH), str(TEXVARS_PATH))
+    writer = TexWriter(str(CONFIG_PATH), str(TEXVARS_PATH))
 
     # Send email if the vacancyID is not present in the database
     if manager.record_exists(writer.json_vars['vacancyID']):
@@ -129,7 +130,7 @@ def query_db(vacancy_id: int):
     Args:
         vacancy_id (int): The vacancy ID to be queried against
     """
-    manager = CSVFileManager(CONFIG_PATH)
+    manager = CSVFileManager(str(CONFIG_PATH))
     if manager.record_exists(str(vacancy_id)):
         pass
     else:
@@ -140,21 +141,19 @@ def query_db(vacancy_id: int):
 def generate():
     """Generates a cover letter in the form of a .pdf file, using the data in texvars.json
     """
-    writer = TexWriter(CONFIG_PATH, TEXVARS_PATH)
-    builder = CoverLetterBuilder(CONFIG_PATH)
+    writer = TexWriter(str(CONFIG_PATH), str(TEXVARS_PATH))
+    builder = CoverLetterBuilder(str(CONFIG_PATH))
 
     writer.write_tex_string_to_disk()
     builder.generate_pdf_from_tex()
     builder.move_pdf_to_builds(silent=True)
 
-# TODO: Fix docstring
-
 
 def edit():
-    """_summary_
+    """Edits the texvars.json configuration file
     """
     writer = TexWriter(str(CONFIG_PATH), str(TEXVARS_PATH))
-    writer.manual_var_input(writer.json_vars)
+    writer.manual_var_input(list(writer.json_vars.keys()))
 
 
 @app.command()
@@ -177,21 +176,23 @@ def interactive():
             questions = [
                 inquirer.List(name='choice',
                               message="Select an option to continue",
-                              choices=["Query database", "Edit texvars.json", "Generate cover letter", "Send email",
-                                       "Exit"],
-                              carousel=True
+                              choices=["Query database", "Edit texvars.json",
+                                       "Generate cover letter",
+                                       "Send email", "Exit"],
+                              carousel=True,
                               ),
             ]
-            answers = inquirer.prompt(questions)['choice']
+            answers = inquirer.prompt(questions)
             clear()
-            if "Exit" in answers:
+            if "Exit" in answers['choice']:
                 escaped = True
 
             # TODO: Make another case, print database that prints entire DB
-            match answers:
+            match answers['choice']:
                 case 'Query database':
                     # TODO: Make this handle gracefully if the input fails
-                    query_db(vacancy_id=int(input("Enter the vacancy ID: ")))
+                    query_db(vacancy_id=int(
+                        IntPrompt.ask("Enter the vacancy ID: ")))
                 case 'Edit texvars.json':
                     clear()
                     edit()

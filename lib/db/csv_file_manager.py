@@ -3,6 +3,7 @@
 import csv
 import json
 import datetime
+from rich.pretty import pprint
 
 
 class CSVFileManager:
@@ -60,7 +61,7 @@ class CSVFileManager:
                 def process_row(row):
                     for cell in row:
                         if record in cell:
-                            print(f'{row}')
+                            pprint(row, expand_all=True)
                             return True
                     return False
 

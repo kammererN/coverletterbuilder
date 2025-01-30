@@ -6,10 +6,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import os
+from datetime import datetime
 
 
 class Emailer:
-    """Class representing"""
+    """Class for handling email generation and sending"""
 
     def __init__(self, abs_config_path: str, abs_texvars_path: str):
         # Load config from file
@@ -24,7 +25,7 @@ class Emailer:
         self.message['Subject'] = f"Application for {self.tex['vacancyTitle'].strip()}; Vacancy {self.tex['vacancyID']}"
         # Build body
         # TODO: Set greeting based on time of application!
-        self.greeting = f"Good afternoon {self.tex['hiringManager']}:\n\n"
+        self.greeting = self.__set_appropriate_greeting()
         self.info = f"I am writing to apply for the {self.tex['vacancyTitle'].strip()} position; vacancy {self.tex['vacancyID']}.\nAttached: resume, cover letter\n\n"
         self.closing = f"Thank you for the consideration, \nNicholas J. Kammerer\n <{self.config['sender_email']}>"
         self.body = self.greeting + self.info + self.closing
@@ -37,6 +38,20 @@ class Emailer:
             attachment.add_header('Content-Disposition',
                                   'attachment', filename=os.path.basename(pdf))
             self.message.attach(attachment)
+
+    def __set_appropriate_greeting(self) -> str:
+        am = f"Good morning {self.tex['hiringManager']}:\n\n"
+        noon = f"Good afternoon {self.tex['hiringManager']}:\n\n"
+        pm = f"Good evening {self.tex['hiringManager']}:\n\n"
+
+        hour = datetime.now().time().hour
+
+        if hour > 18:
+            return pm
+        if hour > 12:
+            return noon
+        else:
+            return am
 
     def send_email(self) -> None:
         """Tries to connect to a class-defined SMTP server. If unsuccessful, return error."""
