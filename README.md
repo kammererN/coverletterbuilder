@@ -11,7 +11,7 @@ Simply download the binary, provided for Unix-based systems (i.e. Linux & MacOS)
 After downloading the appropriate binary, run the following for a list of commands:
 
 ```bash
-./cletterbuildr --help
+./clettrbuildr --help
 ```
 
 The two important files for this program are ```config.json``` and ```texvars.json```, both of which are expected in the same directory as the binary (*Change this*).
