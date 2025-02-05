@@ -40,7 +40,7 @@ class Emailer:
             self.message.attach(attachment)
 
     def __set_appropriate_greeting(self) -> str:
-        am = f"Good morning {self.tex['hiringManager']}:\n\n"
+        am = f"Good morning {self.tex['hiringManager']}:\n"
         noon = f"Good afternoon {self.tex['hiringManager']}:\n\n"
         pm = f"Good evening {self.tex['hiringManager']}:\n\n"
 

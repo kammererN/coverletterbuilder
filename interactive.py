@@ -123,7 +123,6 @@ def send_email():
                                  writer.json_vars['stateAgency']])
 
 
-@app.command()
 def query_db(vacancy_id: int):
     """Queries the database against a given vacancy ID. Prints vacancy data if successful.
 
@@ -137,7 +136,6 @@ def query_db(vacancy_id: int):
         print(f'No records exist for vacancy {str(vacancy_id)}')
 
 
-@app.command()
 def generate():
     """Generates a cover letter in the form of a .pdf file, using the data in texvars.json
     """
@@ -219,7 +217,6 @@ def interactive():
         sys.exit(0)
 
 
-@ app.command()
 def view():
     """Opens the most recently generated cover letter .pdf in the OS-defined launcher.
     """
