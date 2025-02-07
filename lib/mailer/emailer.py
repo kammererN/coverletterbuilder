@@ -48,7 +48,7 @@ class Emailer:
 
         if hour > 18:
             return pm
-        if hour > 12:
+        if hour >= 12:
             return noon
         else:
             return am
