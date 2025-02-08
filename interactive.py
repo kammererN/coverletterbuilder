@@ -11,10 +11,10 @@ import inquirer
 from lib.builder.builder import CoverLetterBuilder
 from lib.builder.writer import TexWriter
 from lib.mailer.emailer import Emailer
-from lib.db.csv_file_manager import CSVFileManager
+from lib.db.csv_mgr import CSVFileManager
 
-CONFIG_PATH = Path(os.getcwd()) / 'config.json'
-TEXVARS_PATH = Path(os.getcwd()) / 'texvars.json'
+CONFIG_PATH: Path = Path(os.getcwd()) / 'config.json'
+TEXVARS_PATH: Path = Path(os.getcwd()) / 'texvars.json'
 
 
 def check_config_exists(config_path: str) -> None:
@@ -23,7 +23,7 @@ def check_config_exists(config_path: str) -> None:
     Args:
         config_path (str): Absolute path to the configuration file.
     """
-    if os.path.exists(config_path):
+    if os.path.exists(path=config_path):
         print(f'Config file exists at {config_path}')
     else:
         print(f'Config file does not exist at {config_path}')
@@ -65,11 +65,11 @@ def check_config_exists(config_path: str) -> None:
                     "datafile_path": ""
                 }
             }
-            with open(config_path, 'w', encoding='utf8') as file:
-                dump(default_config, file)
+            with open(file=config_path, mode='w', encoding='utf8') as file:
+                dump(obj=default_config, fp=file)
             print(f"Config written to {config_path}")
 
-        generate_default_config(config_path)
+        generate_default_config(config_path=config_path)
 
 
 def check_texvars_exists(texvars_path: str) -> None:
@@ -118,9 +118,9 @@ def send_email():
         print(f"You\'ve already applied to {writer.json_vars['vacancyID']}.")
     else:
         mailer.send_email()
-        manager.append_datafile([manager.date, writer.json_vars['vacancyID'],
+        manager.append_datafile((manager.date, writer.json_vars['vacancyID'],
                                  writer.json_vars['vacancyTitle'].strip(),
-                                 writer.json_vars['stateAgency']])
+                                 writer.json_vars['stateAgency']))
 
 
 def query_db(vacancy_id: int):
