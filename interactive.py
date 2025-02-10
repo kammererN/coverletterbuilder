@@ -11,7 +11,8 @@ import inquirer
 from lib.builder.builder import CoverLetterBuilder
 from lib.builder.writer import TexWriter
 from lib.mailer.emailer import Emailer
-from lib.db.csv_mgr import CSVFileManager
+# from lib.db.csv_mgr import CSVFileManager
+from lib.db.database_mgr import DatabaseManager
 
 CONFIG_PATH: Path = Path(os.getcwd()) / 'config.json'
 TEXVARS_PATH: Path = Path(os.getcwd()) / 'texvars.json'
@@ -109,7 +110,8 @@ check_texvars_exists(str(TEXVARS_PATH))
 def send_email():
     """Manually sends the email defined in `config.json`.
     """
-    manager = CSVFileManager(str(CONFIG_PATH))
+    # manager = CSVFileManager(str(CONFIG_PATH))
+    manager = DatabaseManager(CONFIG_PATH)
     mailer = Emailer(str(CONFIG_PATH), str(TEXVARS_PATH))
     writer = TexWriter(str(CONFIG_PATH), str(TEXVARS_PATH))
 
@@ -118,9 +120,10 @@ def send_email():
         print(f"You\'ve already applied to {writer.json_vars['vacancyID']}.")
     else:
         mailer.send_email()
-        manager.append_datafile((manager.date, writer.json_vars['vacancyID'],
-                                 writer.json_vars['vacancyTitle'].strip(),
-                                 writer.json_vars['stateAgency']))
+        # DO NOT pass curent date as thats done by itself in the SQL
+        manager.add_position(position_data=(writer.json_vars['vacancyID'],
+                                            writer.json_vars['vacancyTitle'].strip(),
+                                            writer.json_vars['stateAgency']))
 
 
 def query_db(vacancy_id: int):
@@ -129,11 +132,11 @@ def query_db(vacancy_id: int):
     Args:
         vacancy_id (int): The vacancy ID to be queried against
     """
-    manager = CSVFileManager(str(CONFIG_PATH))
-    if manager.record_exists(str(vacancy_id)):
-        pass
+    manager = DatabaseManager(str(CONFIG_PATH))
+    if manager.record_exists(vacancy_id):
+        print(manager.get_record(vacancy_id))
     else:
-        print(f'No records exist for vacancy {str(vacancy_id)}')
+        print("Record not found.")
 
 
 def generate():

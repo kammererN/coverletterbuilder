@@ -42,6 +42,8 @@ class TexWriter:
         new_var_dict = {}
         for var in required_vars:
             new_var_dict[var] = str(input(f'Input {var}: '))
+        # Add required space after vacanctTitle for tex compilation bug
+        new_var_dict['vacancyTitle'] = str(new_var_dict['vacancyTitle']) + " "
         pprint(new_var_dict, expand_all=True)
 
         self.texstring = ""  # Empty texstring
