@@ -10,9 +10,9 @@ from rich.prompt import IntPrompt
 import inquirer
 from lib.builder.builder import CoverLetterBuilder
 from lib.builder.writer import TexWriter
-from lib.mailer.emailer import Emailer
+from lib.emailer import Emailer
 # from lib.db.csv_mgr import CSVFileManager
-from lib.db.database_mgr import DatabaseManager
+from lib.database_mgr import DatabaseManager
 
 CONFIG_PATH: Path = Path(os.getcwd()) / 'config.json'
 TEXVARS_PATH: Path = Path(os.getcwd()) / 'texvars.json'
