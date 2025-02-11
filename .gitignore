@@ -5,6 +5,8 @@ config.json
 texvars.json
 *.pdf
 *.spec
+*.env
+*.url
 test.py
 
 /data

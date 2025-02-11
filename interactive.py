@@ -56,7 +56,6 @@ def check_config_exists(config_path: str) -> None:
                 },
                 "mailer": {
                     "sender_email": "",
-                    "sender_password": "",
                     "smtp_server_address": "smtp.gmail.com",
                     "smtp_port": 587,
                     "attachments": ["", ""]
