@@ -8,10 +8,9 @@ from typer import Typer, launch
 from rich import print
 from rich.prompt import IntPrompt
 import inquirer
-from lib.builder.builder import CoverLetterBuilder
-from lib.builder.writer import TexWriter
+from lib.builder import CoverLetterBuilder
+from lib.writer import TexWriter
 from lib.emailer import Emailer
-# from lib.db.csv_mgr import CSVFileManager
 from lib.database_mgr import DatabaseManager
 
 CONFIG_PATH: Path = Path(os.getcwd()) / 'config.json'
@@ -122,8 +121,9 @@ def send_email():
         mailer.send_email()
         # DO NOT pass curent date as thats done by itself in the SQL
         manager.add_position(position_data=(writer.json_vars['vacancyID'],
-                                            writer.json_vars['vacancyTitle'].strip(),
-                                            writer.json_vars['stateAgency']))
+                                            writer.json_vars['vacancyTitle'].strip(
+        ),
+            writer.json_vars['stateAgency']))
 
 
 def query_db(vacancy_id: int):
